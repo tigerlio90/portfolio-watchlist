@@ -1,0 +1,16 @@
+const $=id=>document.getElementById(id),fmt=n=>n==null?"–":Number(n).toLocaleString("de-DE",{maximumFractionDigits:2}),pct=n=>n==null?"–":`${n>=0?"+":""}${Number(n).toFixed(1)}%`,cl=n=>n>=0?"pos":"neg";
+let P=[];
+async function api(u,o){let r=await fetch(u,o);return r.json()}
+function spark(a){if(!a||a.length<2)return"";let min=Math.min(...a),max=Math.max(...a),w=58,h=22;let pts=a.map((v,i)=>`${i*w/(a.length-1)},${h-(v-min)/(max-min||1)*h}`).join(" ");return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline fill="none" stroke="#08a451" stroke-width="2" points="${pts}"/></svg>`}
+async function loadMarkets(){let d=await api("/api/markets");let cards=d.map(x=>`<div class="market"><b>${x.name}</b><div class="price">${fmt(x.price)}</div><strong class="${cl(x.d1)}">${pct(x.d1)}</strong>${spark(x.spark)}</div>`).join("");$("markets").innerHTML=cards;$("marketsLarge").innerHTML=d.map(x=>`<div class="card"><div class="row"><div class="name">${x.name}</div><div class="price">${fmt(x.price)}</div><div class="chg ${cl(x.d1)}">${pct(x.d1)}</div></div></div>`).join("")}
+function newsHTML(d){return d.map(x=>`<div class="news"><div class="meta">${x.published||""}</div><a href="${x.link}" target="_blank">${x.title}</a></div>`).join("")}
+async function loadNews(c="markets"){let d=await api("/api/news?category="+c);$("newsHome").innerHTML=newsHTML(d.slice(0,3));$("newsAll").innerHTML=newsHTML(d)}
+async function loadK(){let d=await api("/api/kobeissi");$("kfeed").innerHTML=newsHTML(d)}
+async function loadP(){P=await api("/api/portfolio");$("watchHome").innerHTML=P.slice(0,4).map(row).join("");$("watchAll").innerHTML=P.map(x=>row(x,true)).join("");let y=P.filter(x=>x.ytd!=null).map(x=>x.ytd);$("avgPerf").innerHTML=y.length?`<span class="${cl(y.reduce((a,b)=>a+b,0)/y.length)}">${pct(y.reduce((a,b)=>a+b,0)/y.length)}</span>`:"–"}
+function row(x,manage=false){return `<div class="row"><div><div class="name">${x.name}</div><small>${x.ticker} · ${x.isin||""}</small></div><div><div class="price">${fmt(x.price)}</div>${spark(x.spark)}</div><div class="chg ${cl(x.d1)}">${pct(x.d1)}${manage?`<br><button class="delete" onclick="del('${x.ticker}')">Löschen</button>`:""}</div></div>`}}
+function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));if(id!=="home")$(id).classList.add("active");document.querySelector(`nav button[data-page="${id}"]`)?.classList.add("active");document.querySelectorAll("main>section:not(.page)").forEach(x=>x.style.display=id==="home"?"block":"none");scrollTo(0,0)}
+function toggleSheet(){$("sheet").style.display=$("sheet").style.display==="flex"?"none":"flex"}function openAdd(){$("modal").style.display="flex"}function closeAdd(){$("modal").style.display="none"}
+async function addSecurity(){await api("/api/security",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({name:$("n").value,isin:$("i").value,ticker:$("t").value,theme:$("th").value})});closeAdd();await loadP();go("watchlist")}
+async function del(t){if(confirm("Titel wirklich löschen?")){await fetch("/api/security/"+encodeURIComponent(t),{method:"DELETE"});loadP()}}
+async function refreshAll(){await Promise.all([loadMarkets(),loadNews(),loadK(),loadP()])}
+go("home");refreshAll();

@@ -1,0 +1,28 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#063b74"><title>Investment Cockpit</title><link rel="stylesheet" href="/static/style.css"></head>
+<body><header><div class="top"><div class="logo">ERSTE <span>▰</span><small>Investment Cockpit</small></div><button class="menu" onclick="toggleSheet()">☰</button></div>
+<h1>Hallo Florian</h1><p>Deine Märkte. Deine Watchlist. Deine Insights.</p></header>
+<main>
+<section class="market-strip"><div id="markets" class="markets"><div class="loading">Marktdaten laden…</div></div></section>
+<section class="card" id="homeNews"><div class="cardhead"><h2>▣ Top Market News</h2><button onclick="go('news')">Alle News →</button></div><div id="newsHome"></div></section>
+<section class="card"><div class="cardhead"><h2>★ Meine Watchlist</h2><button onclick="go('watchlist')">Details →</button></div><div id="watchHome"></div></section>
+<section class="card"><div class="cardhead"><h2>◔ Portfolio Snapshot</h2><span>YTD</span></div><div class="big" id="avgPerf">–</div><div class="sub">Durchschnittliche YTD-Performance der verfügbaren Titel</div></section>
+
+<section class="page" id="news"><div class="pagehead"><button onclick="go('home')">←</button><h2>Market News</h2></div>
+<div class="chips"><button onclick="loadNews('markets')">Märkte</button><button onclick="loadNews('economy')">Wirtschaft</button><button onclick="loadNews('companies')">Unternehmen</button><button onclick="loadNews('centralbanks')">Zentralbanken</button><button onclick="loadNews('geopolitics')">Geopolitik</button></div><div id="newsAll"></div></section>
+
+<section class="page" id="watchlist"><div class="pagehead"><button onclick="go('home')">←</button><h2>Meine Watchlist</h2><button class="plus" onclick="openAdd()">＋</button></div><div id="watchAll"></div></section>
+
+<section class="page" id="marketsPage"><div class="pagehead"><button onclick="go('home')">←</button><h2>Märkte</h2></div><div id="marketsLarge"></div></section>
+
+<section class="page" id="more"><div class="pagehead"><button onclick="go('home')">←</button><h2>Mehr</h2></div>
+<div class="menuList"><button onclick="go('kobeissi')">The Kobeissi Letter – Radar <b>›</b></button><button onclick="openAdd()">Titel hinzufügen <b>›</b></button><button onclick="refreshAll()">Daten aktualisieren <b>›</b></button></div></section>
+
+<section class="page" id="kobeissi"><div class="pagehead"><button onclick="go('more')">←</button><h2>Kobeissi Radar</h2></div><div class="notice">Öffentlich indexierte Web-/News-Ergebnisse. Kein direkter X-API-Feed.</div><div id="kfeed"></div></section>
+</main>
+
+<nav><button class="active" data-page="home" onclick="go('home')"><i>⌂</i>Home</button><button data-page="marketsPage" onclick="go('marketsPage')"><i>▥</i>Märkte</button><button data-page="news" onclick="go('news')"><i>▤</i>News</button><button data-page="watchlist" onclick="go('watchlist')"><i>☆</i>Watchlist</button><button data-page="more" onclick="go('more')"><i>☰</i>Mehr</button></nav>
+
+<div class="sheet" id="sheet"><div class="sheetbox"><div class="handle"></div><button onclick="go('news');toggleSheet()">Market News</button><button onclick="go('kobeissi');toggleSheet()">Kobeissi Radar</button><button onclick="go('watchlist');toggleSheet()">Meine Watchlist</button><button onclick="openAdd();toggleSheet()">Titel hinzufügen</button><button onclick="refreshAll();toggleSheet()">Daten aktualisieren</button><button class="cancel" onclick="toggleSheet()">Schließen</button></div></div>
+<div class="modal" id="modal"><div class="modalbox"><div class="pagehead"><h2>Titel hinzufügen</h2><button onclick="closeAdd()">×</button></div><input id="n" placeholder="Name"><input id="i" placeholder="ISIN"><input id="t" placeholder="Yahoo Ticker"><input id="th" placeholder="Investmentthema"><button class="primary" onclick="addSecurity()">Hinzufügen</button></div></div>
+<script src="/static/app.js"></script></body></html>
